@@ -1,9 +1,6 @@
 #!/usr/bin/env bash
-#Client configuration file (w/ Puppet
-file { '/home/ubuntu/.ssh/config':
-  ensure  => file,
-  owner   => 'ubuntu',
-  group   => 'ubuntu',
-  mode    => '0600',
-  content => template('ssh/ssh_config.erb'),
-}
+#Client configuration file
+file { 'etc/ssh/ssh_config':
+  ensure  => present,
+  path    => '/etc/ssh/ssh_config',
+  content => "IdentityFile ~/.ssh/school\n\tPasswordAuthentication no"}
