@@ -1,0 +1,75 @@
+#!/usr/bin/env bash
+# Installing updating the packages
+sudo apt-get update
+sudo apt-get install curl -y
+# Installing Apache software
+sudo apt-get install -y apache2
+# Starting the Apache software
+sudo service apache2 start
+# Changin ownership of the /var/www directory
+sudo chown -R "$USER:$USER" /var/www/html
+# Chaning the ownership of the configuration files
+sudo chown -R "$USER:$USER" /etc/apache2/
+# Chaning the ownership of the ports.conf file
+sudo chown -R "$USER:$USER" /etc/apache2/ports.conf
+# Updating the index.html file
+echo "Hello Holberton" > /var/www/html/index.html
+# Editing the http config file
+echo "
+<VirtualHost *:80 *:8080>
+	# The ServerName directive sets the request scheme, hostname and port that
+	# the server uses to identify itself. This is used when creating
+	# redirection URLs. In the context of virtual hosts, the ServerName
+	# specifies what hostname must appear in the request's Host: header to
+	# match this virtual host. For the default virtual host (this file) this
+	# value is not decisive as it is used as a last resort host regardless.
+	# However, you must set it for any further virtual host explicitly.
+	#ServerName www.example.com
+
+	ServerAdmin webmaster@localhost
+	DocumentRoot /var/www/html
+
+	# Available loglevels: trace8, ..., trace1, debug, info, notice, warn,
+	# error, crit, alert, emerg.
+	# It is also possible to configure the loglevel for particular
+	# modules, e.g.
+	#LogLevel info ssl:warn
+
+	ErrorLog ${APACHE_LOG_DIR}/error.log
+	CustomLog ${APACHE_LOG_DIR}/access.log combined
+</VirtualHost>
+
+# vim: syntax=apache ts=4 sw=4 sts=4 sr noet
+" > /etc/apache2/sites-available/000-default.conf
+# reconfiguring the ports.conf file to listen to port 8080
+echo "
+# If you just change the port or add more ports here, you will likely also
+# have to change the VirtualHost statement in
+# /etc/apache2/sites-enabled/000-default.conf
+
+Listen 80
+Listen 8080
+
+<IfModule ssl_module>
+	Listen 443
+</IfModule>
+
+<IfModule mod_gnutls.c>
+	Listen 443
+</IfModule>
+
+# vim: syntax=apache ts=4 sw=4 sts=4 sr noet
+" > /etc/apache2/ports.conf
+# restarting the Apache software
+# set name server to localhost
+echo "ServerName localhost" >> /etc/apache2/apache2.conf
+# Changing the ownership back to root
+sudo chown -R root:root /etc/apache2/apache2.conf
+# Changing the ownership back to root
+sudo chown -R root:root /etc/apache2/sites-available/000-default.conf
+# Changing the ownership back to root
+sudo chown -R root:root /etc/apache2/ports.conf
+# Changing the ownership back to root
+sudo chown -R root:root /var/www/html/index.html
+# restart the apache2 service
+sudo service apache2 restart
